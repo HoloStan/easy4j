@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="4" name="DEFAULT">
+  <test name="DEFAULT">
+<!--    <classes>
+      <class name="com.ea.eadp.lb.test.cases.lockbox5.pogo.ui.pointPurchase.PurchaseGemsTest">
+        <methods>
+          <include name="purchaseWithNewCreditCard"/>
+          <include name="purchaseWithNewPayPal"/>
+        </methods>
+      </class> &lt;!&ndash; com.ea.eadp.lb.test.cases.lockbox5.pogo.ui.pointPurchase.PurchaseGemsTest &ndash;&gt;
+    </classes>
+-->
+  </test> <!-- BVT_Test -->
+</suite> <!-- BVT -->

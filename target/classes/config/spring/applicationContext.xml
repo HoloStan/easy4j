@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="  
+    http://www.springframework.org/schema/beans   
+    http://www.springframework.org/schema/beans/spring-beans.xsd  
+    http://www.springframework.org/schema/tx   
+    http://www.springframework.org/schema/tx/spring-tx.xsd   
+    http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd  
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context.xsd">
+    
+	<!-- 1.扫描注解，包括子集 -->
+	<!-- 使用annotation 自动注册bean,并保证@Required,@Autowired的属性被注入 -->
+	<context:component-scan base-package="me.web" />
+	
+	<!-- 2.加载SpringContext -->
+	<bean class="me.web.framework.utils.spring.SpringUtil"/>
+	
+	<!-- 3.加载.properties文件  -->
+	<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+            	<!-- JDBC数据源配置 -->
+                <value>classpath*:jdbc.properties</value>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- 4.Jndi数据源 -->
+    <bean id="dataSourceOne" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/holostan" />
+	</bean>
+	<bean id="dataSourceTwo" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/hooragon" />
+	</bean>
+    
+    <!-- dbcp数据源 -->
+	<!-- <bean id="dataSourceTwo" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@10.15.208.144:1521:erc100" />
+		<property name="username" value="erc_ep" />
+		<property name="password" value="magustek" />
+	</bean> -->
+
+	<!-- 5.配置动态数据源 -->
+	<!-- 将DynamicDataSource加入到Spring的context配置文件中， 同时配置DynamicDataSource的targetDataSources(多数据源目标)属性的Map映射。 -->
+	<bean id="dynamicDataSource" class="me.web.framework.datasource.DynamicDataSource">
+		<!-- 通过key-value的形式来关联数据源 -->
+		<property name="targetDataSources">
+			<map>
+				<entry value-ref="dataSourceOne" key="dataSourceOne"></entry>
+				<entry value-ref="dataSourceTwo" key="dataSourceTwo"></entry>
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="dataSourceOne" />
+	</bean> 
+	
+	<!-- 6.使用Mybatis管理动态数据源 -->
+	<bean id="genericPlugin" class="me.web.framework.plugins.GenericPlugin">
+		<!-- <property name="pageCount" value=".*Count.*"/> -->
+	</bean >
+	
+	<!-- 创建SqlSessionFactory，同时指定数据源 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dynamicDataSource" />
+		<!-- 指定myBatis的总装配置文件 -->
+		<property name="configLocation" value="classpath:config/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations"	value="classpath*:/me/web/**/dao/mapper/*Mapper.xml" />
+			<property name="plugins">
+				<list>
+					<ref bean="genericPlugin"/>
+				</list>
+			</property>
+	</bean>
+
+	<!-- Mapper接口所在包名，Spring会自动查找其下的Mapper -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="me.web.**.dao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 7.动态事物管理（无法实现全局动态事物管理） -->
+	<!-- 申明獨立事務  -->
+	<bean id="dataSourceOneTx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	  <property name="dataSource">
+			<ref bean="dataSourceOne" />
+	  </property>
+	</bean>
+	<bean id="dataSourceTwoTx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	  <property name="dataSource">
+			<ref bean="dataSourceTwo" />
+	  </property>
+	</bean>
+	
+	<!-- 指定路由事務管理  -->
+	<bean id="routingTransactionManager" class="me.web.framework.datasource.RoutingTransactionManager">
+	  <property name="targetTransactionManagers">
+	    <map value-type="org.springframework.transaction.PlatformTransactionManager">
+	      <entry key="dataSourceOne" value-ref="dataSourceOneTx" />
+	      <entry key="dataSourceTwo" value-ref="dataSourceTwoTx" />
+	    </map>
+	  </property>
+	</bean>
+	<!--     配置事务回滚的通知   -->
+	<tx:advice id="txAdvice" transaction-manager="routingTransactionManager">
+	  <tx:attributes>
+	    <tx:method name="*" rollback-for="java.lang.Exception"/>
+	  </tx:attributes>
+	</tx:advice>
+	<!--   指定那些类的哪些方法参与事务   -->
+	<aop:config>
+		<aop:pointcut id="txPoint" expression="@annotation(org.springframework.transaction.annotation.Transactional)" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPoint"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* me.web..service.impl.save*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* me.web..service.impl.create*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* me.web..service.impl.insert*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* me.web..service.impl.delete*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* me.web..service.impl.update*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* me.web..service.impl.batch*(..))"/>
+	</aop:config>
+	
+	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+<!-- 	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dynamicDataSource" />
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+	</bean>
+	
+	
+	定义拦截器，用来指定事物属性，级别，和异常处理
+	<bean id="transactionInterceptor"
+		class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager" ref="transactionManager"></property>
+		<property name="transactionAttributes">
+			<props>
+				
+					PROPAGATION_SUPPORTS: 如果已经存在事务,则加入事务;如果没有事务,则以非事务的方式执行;
+					PROPAGATION_MANDATORY: 使用当前事务, 如果没有, 则抛出异常; PROPAGATION_REQUIRED:
+					新建事务,如果当前有事务, 则挂起; ROPAGATION_NOT_SUPPORTED:以非事务的方式执行, 如果当前有事务,
+					则挂起; PROPAGATION_NEVER:以非事务的方式执行, 如果当前有事务,则抛出异常; +/-Exception +
+					表示异常出现时事物提交 - 表示异常出现时事务回滚, 被拦截器拦截，并且方法名命名按照以下命名规范才能被事务管理,已测试
+				
+				<prop key="is*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="insert*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="batch*">PROPAGATION_REQUIRED</prop>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="create*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	
+		用来定义哪些类需要采用事物管理 spring 事物的动态代理类 BeanNameAutoProxyCreator
+		根据类名自动代理，接受表达式
+	
+	<bean id="BeanProxy"
+		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="beanNames">
+			对类名以ServiceImpl结尾的、标注的类进行代理,
+			<value>*ServiceImpl</value>
+		</property>
+		对代理类进行加载拦截器(实现通知的过程)
+		<property name="interceptorNames">
+			<list>
+				该值和拦截器的id保持一致
+				<value>transactionInterceptor</value>
+			</list>
+		</property>
+	</bean>
+	
+	可通过注解控制事务
+	<tx:annotation-driven /> -->
+	
+	<!-- aop -->
+	<aop:aspectj-autoproxy />
+	
+	<!-- 导入WebService配置文件 -->
+	<import resource="applicationContext-webservice.xml"/>
+	
+	<!-- 导入WebSocket配置文件 -->
+	<import resource="applicationContext-websocket.xml"/>
+	
+	<!-- 导入task配置文件 -->
+	<import resource="applicationContext-task.xml"/>
+
+</beans>  

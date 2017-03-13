@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/jaxws 
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/jaxrs 
+	http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<!-- 3.0以上版本不需要导入cxf-extension-soap.xml？ -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+<!-- 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-jaxrs-binding.xml" /> -->
+	
+<!-- 	<bean id="markInterceptor" class="com.magus.env.system.common.interceptor.CXFInInterceptor"></bean> -->
+	
+<!-- SOAP 风格
+	implementorClass属性就是我们提供的实现类
+	<jaxws:endpoint id="soap_server" implementorClass="com.magus.env.webservice.server.impl.SoapDemoImpl" address="/cxf_soap" >
+		添加log拦截
+		<jaxws:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+	</jaxws:endpoint>
+	soap 客户端
+	<jaxws:client id="client" serviceClass="com.magus.env.webservice.server.SoapDemo"
+		address="http://localhost:8080/erc/webservice/cxf_soap"/>   -->
+	
+	
+	<!-- providers -->	
+	<!-- 如果拦截方法(实现类)上有@MessageBody注解，则执行该策略，可以配置是否自动打包，默认自动打包 -->
+	<!-- <bean name="jsonMessageBody" class="com.magus.env.system.common.interceptor.JsonMessageBodyWriter" /> -->
+	
+	<!-- REST 风格
+    <jaxrs:server address="/android">  
+        <jaxrs:serviceBeans>  
+            <bean class="com.magus.env.webservice.server.impl.PhoneLoginImpl"></bean>
+        </jaxrs:serviceBeans> 
+        登录时对非表单参数格式数据读取的拦截器，如不需要可以省略
+        <jaxrs:inInterceptors>  
+          <ref bean="markInterceptor"/>
+        </jaxrs:inInterceptors>
+        <jaxrs:extensionMappings>  
+            <entry key="json" value="application/json" />  
+        </jaxrs:extensionMappings>  
+        通过注解自动打包并序列化的插件，如不需要可以省略
+        <jaxrs:providers>
+		    <ref bean="jsonMessageBody"/>
+		</jaxrs:providers>
+    </jaxrs:server> -->
+    
+</beans> 

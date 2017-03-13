@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.2//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.web.demo.dao.DemoDao">
+<!--
+		映射文件,type是configuration.xml中定义的别名(alias属性),id值供本文件中resultMap属性调用
+		property是实体类的属性名(根据需要得到的结果,自行添加所需要的字段),
+		colunm是数据库字段(这个字段不一定是是同一张表中的字段,查询的任何一张表中的任何一个字段,都可以在此配置)
+		,如果数据库字段和实体类字段完全相同则不用配置，反之必须配置，否则字段名不同的属性得不到值(建议无论字段名是否相同都配置)
+		javaType指定java数据类型， jdbcType是数据库字段类型
+	-->
+
+</mapper>
