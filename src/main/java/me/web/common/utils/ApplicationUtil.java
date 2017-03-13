@@ -35,9 +35,9 @@ public class ApplicationUtil {
      * @param value 要加密的值
      * @return sha1加密后的值
      */
-    public static String sha1Hex(String value) {
-        return DigestUtils.sha1Hex(value);
-    }
+//    public static String sha1Hex(String value) {
+//        return DigestUtils.sha1Hex(value);
+//    }
 
     /**
      * sha256加密
@@ -45,8 +45,8 @@ public class ApplicationUtil {
      * @param value 要加密的值
      * @return sha256加密后的值
      */
-    public static String sha256Hex(String value) {
-        return DigestUtils.sha256Hex(value);
-    }
+//    public static String sha256Hex(String value) {
+//        return DigestUtils.sha256Hex(value);
+//    }
 
 }

@@ -25,15 +25,16 @@
 			<param-value>true</param-value>
 		</init-param>
 	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 <!-- 	<filter>
 		<filter-name>Encoding</filter-name>
 		<filter-class>
 			com.magus.env.framework.util.utils.SetCharacterEncodingFilter</filter-class>
 	</filter>
-	<filter-mapping>
-		<filter-name>encodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping> -->
+ -->
 	<!-- mvc -->
 	<servlet>
 		<servlet-name>springDispatcher</servlet-name>
