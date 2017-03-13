@@ -1,0 +1,86 @@
+Python版一键安装包
+wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+chmod +x shadowsocks.sh
+./shadowsocks.sh 2>&1 | tee shadowsocks.log
+
+启动：/etc/init.d/shadowsocks start 
+停止：/etc/init.d/shadowsocks stop 
+重启：/etc/init.d/shadowsocks restart 
+状态：/etc/init.d/shadowsocks status 
+配置文件路径：/etc/shadowsocks.json
+卸载：./shadowsocks.sh uninstall
+
+R版一键安装包
+wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocksR.sh
+chmod +x shadowsocksR.sh
+./shadowsocksR.sh 2>&1 | tee shadowsocksR.log
+
+启动：/etc/init.d/shadowsocks start 
+停止：/etc/init.d/shadowsocks stop 
+重启：/etc/init.d/shadowsocks restart 
+状态：/etc/init.d/shadowsocks status 
+配置文件路径：/etc/shadowsocks.json 
+日志文件路径：/var/log/shadowsocks.log
+卸载输入:./shadowsocksR.sh uninstall
+
+libev版一键安装包 
+适用于CentOS系统
+wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-libev.sh
+chmod +x shadowsocks-libev.sh
+./shadowsocks-libev.sh 2>&1 | tee shadowsocks-libev.log
+适用于Debian/Ubuntu 系统
+wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-libev-debian.sh
+chmod +x shadowsocks-libev-debian.sh
+./shadowsocks-libev-debian.sh 2>&1 | tee shadowsocks-libev-debian.log
+
+启动：/etc/init.d/shadowsocks start 
+停止：/etc/init.d/shadowsocks stop 
+重启：/etc/init.d/shadowsocks restart 
+查看状态：/etc/init.d/shadowsocks status
+卸载输入：./shadowsocks-libev.sh uninstall
+
+GO版一键安装包
+wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-go.sh
+chmod +x shadowsocks-go.sh
+./shadowsocks-go.sh 2>&1 | tee shadowsocks-go.log
+
+启动：/etc/init.d/shadowsocks start 
+停止：/etc/init.d/shadowsocks stop 
+重启：/etc/init.d/shadowsocks restart 
+状态：/etc/init.d/shadowsocks status
+卸载输入：./shadowsocks-go.sh uninstall
+
+FinalSpeed
+1.服务端会启动iptables,如果服务器修改过ssh端口,请先开放ssh端口,否则可能导致ssh连接失败.
+开放端口命令
+service iptables start
+iptables -I INPUT -p tcp --dport 端口号 -j ACCEPT
+iptables -I OUTPUT -p tcp --sport 端口号 -j ACCEPT
+service iptables save
+2.不熟悉不要乱改配置,如果无法连接,请卸载后一键安装,不要做任何修改,按照教程操作.
+
+一键安装
+rm -f install_fs.sh
+wget http://fs.d去1sm.net/fi掉nalspeed/in中stall_fs.sh文
+chmod +x install_fs.sh
+./install_fs.sh 2>&1 | tee install.log
+
+debian,ubuntu下如果执行脚本出错,请切换到dash,
+切换方法: sudo dpkg-reconfigure dash 选no
+
+安装完后查看日志
+tail -f /fs/server.log
+
+锐速破解
+wget -N --no-check-certificate https://raw.githubusercontent.com/91yun/serverspeeder/master/serverspeeder-all.sh && bash serverspeeder-all.sh
+
+卸载
+chattr -i /serverspeeder/etc/apx* && /serverspeeder/bin/serverSpeeder.sh uninstall -f
+
+[PPTPD]
+wget --no-check-certificate https://raw.githubusercontent.com/91yun/vpn/master/vpn_centos_pptpd.sh && bash vpn_centos_pptpd.sh
+添加用户
+vi /etc/ppp/chap-secrets
+VPN的初始用户名是： vpn  , 初始密码是：  9DG6bam5
+
+

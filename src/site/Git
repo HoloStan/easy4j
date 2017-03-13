@@ -1,0 +1,71 @@
+﻿$ git pull <远程主机名> <远程分支名>:<本地分支名>
+$ git push <远程主机名> <本地分支名>:<远程分支名>
+
+$ git reset --hard HEAD
+放弃本地修改，并重置
+
+git commit -m "comment" 将add的文件提交至本地库中
+git push 将本地库同步至远程库
+
+如果当前分支与远程分支存在track关系，且目的是操作当前分支，则<本地分支名>：<远程分支名>可以省略
+如果当前分支只与唯一远程分支存在track关系（及只与单主机存在track关系），则<远程主机名>可以省略
+
+[git branch]:分支
+git branch 不带参数：列出本地已经存在的分支，并且在当前分支的前面加“*”号标记，例如：
+# git branch
+* master
+  mybranch
+
+git branch -r 列出远程分支，例如：
+#git branch -r
+  origin/HEAD -> origin/master
+  origin/CCC
+  origin/CCO
+
+git branch -a 列出本地分支和远程分支，例如：
+#git branch -a
+   * master
+   mybranch
+   origin/HEAD -> origin/master
+   remotes/origin/CCC
+   remotes/origin/CCO
+
+git branch {new branch name}创建一个新的本地分支，需要注意，此处只是创建分支，不进行分支切换，例如：
+#git branch newbranch
+
+git checkout {local branch name}切换到一个本地分支，例如：
+#git branch mybranch
+
+git checkout -b {new branch name}创建并切换到一个新的本地分支，例如：
+$ git checkout -b mynewbranch
+
+git branch -m | -M oldbranch newbranch 重命名分支 -M 强制重命名
+git branch -d | -D branchname 删除branchname分支
+git branch -d -r branchname 删除远程branchname分支
+
+[git push]：提交至远程库
+git push {remote name} {branch name}将本地分支push到远程，例如：
+$ git push origin mybranch
+
+[git merge]：合并
+1.查看并切换到主分支
+$ git status 
+  On branch master
+2.查看副分支
+$ git branch 
+   * master
+   mybranch
+3.将副分支合并到主分支
+$ git merge mybranch
+  Already up-to-date. 
+
+[git remote]：远程库
+git remote 不带参数，列出已经存在的远程主机名，例如：
+#git remote
+origin
+
+[git init]：初始化
+[git reflog]
+[git reset --hard/soft HEAD@{0}]
+[git stash]
+[git apply]

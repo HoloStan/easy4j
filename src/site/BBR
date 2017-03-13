@@ -1,0 +1,43 @@
+GOOGLE BBR
+1）一键安装
+wget --no-check-certificate https://github.com/52fancy/GooGle-BBR/raw/master/BBR.sh && sh BBR.sh
+之后重启服务器即可
+验证是否安装成功 lsmod | grep bbr
+
+如果结果显示bbr安装成功。
+如果失败，请尝试RMP安装。
+
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+yum install -y https://elrepo.org/linux/kernel/el7/x86_64/RPMS/kernel-ml-4.9.0-1.el7.elrepo.x86_64.rpm
+
+####此代码已经失效####
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+yum install -y http://elrepo.org/people/ajb/devel/kernel-ml/el6/x86_64/RPMS/kernel-ml-devel-4.9.0-0.rc8.el6.elrepo.x86_64.rpm
+
+
+vi /etc/grub.conf
+修改成 default=0
+重启后，查看内核是否安装成功。
+uname -r
+
+开启bbr
+据人反馈：先把/etc/sysctl.conf 文件中 关于 net.ipv4.tcp_congestion_control的配置注释掉。
+echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+保存生效 sysctl -p
+执行 sysctl net.ipv4.tcp_available_congestion_control
+如果结果中有bbr, 则证明你的内核已开启bbr
+执行lsmod | grep bbr, 看到有 tcp_bbr 模块即说明bbr已启动。
+
+
+
+wget -O speedtest https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
+chmod +x speedtest
+./speedtest --server [自选节点]
+
+打开测试服务器地址
+http://www.speedtest.net/speedtest-servers-static.php
+查找关键字
+<server url="http://speedtestneta.hkix.net/speedtest/upload.php" lat="22.3000" lon="114.2000" name="Hong Kong" country="China" cc="HK" sponsor="HKIX1" id="5120" url2="http://speedtestnetb.hkix.net/speedtest/upload.php" host="speedtestneta.hkix.net:8080"/>
+#上海电信节点
+./speedtest-cli --server 3633 | 5083
