@@ -207,9 +207,32 @@
 	    <groupId>org.quartz-scheduler</groupId>  
 	    <artifactId>quartz</artifactId>  
 	    <version>1.8.5</version>  
-	</dependency>  
+	</dependency>
 
-  	<!-- default -->
+	<!--shiro-->
+	<dependency>
+	  <groupId>org.apache.shiro</groupId>
+	  <artifactId>shiro-core</artifactId>
+	  <version>1.2.1</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.shiro</groupId>
+	  <artifactId>shiro-web</artifactId>
+	  <version>1.2.1</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.shiro</groupId>
+	  <artifactId>shiro-ehcache</artifactId>
+	  <version>1.3.2</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.shiro</groupId>
+	  <artifactId>shiro-spring</artifactId>
+	  <version>1.2.1</version>
+	</dependency>
+
+
+	  <!-- default -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
